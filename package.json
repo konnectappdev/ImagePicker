@@ -11,7 +11,7 @@
     "ios"
   ],
   "cordova": {
-    "id": "cordova-plugin-telerik-imagepicker",
+    "id": "cordova-plugin-konnect-imagepicker",
     "platforms": [
       "ios",
       "android",
