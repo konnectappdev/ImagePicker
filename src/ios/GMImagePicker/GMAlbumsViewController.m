@@ -286,3 +286,160 @@ static NSString * const CollectionCellReuseIdentifier = @"CollectionCell";
                                      targetSize:tableCellThumbnailSize1
                                     contentMode:PHImageContentModeAspectFill
                                         options:nil
+                                  resultHandler:^(UIImage *result, NSDictionary *info)
+         {
+             if (cell.tag == currentTag)
+             {
+                 cell.imageView1.image = result;
+             }
+         }];
+        
+        //Second & third images:
+        // TO DO: Only preload the 3pixels height visible frame!
+        if([assetsFetchResult count]>1)
+        {
+            //Compute the thumbnail pixel size:
+            CGSize tableCellThumbnailSize2 = CGSizeMake(kAlbumThumbnailSize2.width*scale, kAlbumThumbnailSize2.height*scale);
+            PHAsset *asset = assetsFetchResult[1];
+            [self.imageManager requestImageForAsset:asset
+                                         targetSize:tableCellThumbnailSize2
+                                        contentMode:PHImageContentModeAspectFill
+                                            options:nil
+                                      resultHandler:^(UIImage *result, NSDictionary *info)
+             {
+                 if (cell.tag == currentTag)
+                 {
+                     cell.imageView2.image = result;
+                 }
+             }];
+        }
+        else
+        {
+            cell.imageView2.image = nil;
+        }
+        if([assetsFetchResult count]>2)
+        {
+            CGSize tableCellThumbnailSize3 = CGSizeMake(kAlbumThumbnailSize3.width*scale, kAlbumThumbnailSize3.height*scale);
+            PHAsset *asset = assetsFetchResult[2];
+            [self.imageManager requestImageForAsset:asset
+                                         targetSize:tableCellThumbnailSize3
+                                        contentMode:PHImageContentModeAspectFill
+                                            options:nil
+                                      resultHandler:^(UIImage *result, NSDictionary *info)
+             {
+                 if (cell.tag == currentTag)
+                 {
+                     cell.imageView3.image = result;
+                 }
+             }];
+        }
+        else
+        {
+            cell.imageView3.image = nil;
+        }
+    }
+    else
+    {
+        [cell setVideoLayout:NO];
+        cell.imageView3.image = [UIImage imageNamed:@"EmptyFolder"];
+        cell.imageView2.image = [UIImage imageNamed:@"EmptyFolder"];
+        cell.imageView1.image = [UIImage imageNamed:@"EmptyFolder"];
+    }
+    
+    return cell;
+}
+
+#pragma mark - UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    GMAlbumsViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    
+    //Init the GMGridViewController
+    GMGridViewController *gridViewController = [[GMGridViewController alloc] initWithPicker:[self picker]];
+    //Set the title
+    gridViewController.title = cell.titleLabel.text;
+    //Use the prefetched assets!
+    gridViewController.assetsFetchResults = [[_collectionsFetchResultsAssets objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    gridViewController.dic_asset_fetches = dic_asset_fetches;
+    
+    //Push GMGridViewController
+    [self.navigationController pushViewController:gridViewController animated:YES];
+}
+
+#pragma mark  Header
+
+-(void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
+{
+    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+    
+    //Here you can customize header views!
+    header.textLabel.font = [UIFont systemFontOfSize:14.0f]; //Set font to "normal" style (default is bold) and to 14 pts.
+    //header.textLabel.font = [UIFont boldSystemFontOfSize:14.0f];
+    //header.textLabel.textColor = [UIColor orangeColor];
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    //Tip: Returning nil hides the section header!
+    
+    NSString *title = nil;
+    if (section > 0)
+    {
+        //Only show title for non-empty sections:
+        PHFetchResult *fetchResult = self.collectionsFetchResultsAssets[section];
+        if( fetchResult.count >0)
+        {
+            title = self.collectionsLocalizedTitles[section - 1];
+        }
+    }
+    return title;
+}
+
+
+#pragma mark - PHPhotoLibraryChangeObserver
+
+- (void)photoLibraryDidChange:(PHChange *)changeInstance
+{
+    // Call might come on any background queue. Re-dispatch to the main queue to handle it.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        NSMutableArray *updatedCollectionsFetchResults = nil;
+        
+        for (PHFetchResult *collectionsFetchResult in self.collectionsFetchResults) {
+            PHFetchResultChangeDetails *changeDetails = [changeInstance changeDetailsForFetchResult:collectionsFetchResult];
+            if (changeDetails) {
+                if (!updatedCollectionsFetchResults) {
+                    updatedCollectionsFetchResults = [self.collectionsFetchResults mutableCopy];
+                }
+                [updatedCollectionsFetchResults replaceObjectAtIndex:[self.collectionsFetchResults indexOfObject:collectionsFetchResult] withObject:[changeDetails fetchResultAfterChanges]];
+            }
+        }
+        
+        //This only affects to changes in albums level (add/remove/edit album)
+        if (updatedCollectionsFetchResults)
+        {
+            self.collectionsFetchResults = updatedCollectionsFetchResults;
+        }
+        
+        //However, we want to update if photos are added, so the counts of items & thumbnails are updated too.
+        //Maybe some checks could be done here , but for now is OKey.
+        [self updateFetchResults];
+        [self.tableView reloadData];
+        
+    });
+}
+
+
+
+#pragma mark - Cell Subtitle
+
+- (NSString *)tableCellSubtitle:(PHFetchResult*)assetsFetchResult
+{
+    //Just return the number of assets. Album app does this:
+    return [NSString stringWithFormat:@"%ld", (long)[assetsFetchResult count]];
+}
+
+
+
+@end
