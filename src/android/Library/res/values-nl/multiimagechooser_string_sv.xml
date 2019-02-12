@@ -6,6 +6,6 @@
     <string name="requesting_thumbnails">Afbeeldingen worden opgehaald</string>
     <string name="multi_image_picker_processing_images_title">Afbeeldingen verwerken</string>
     <string name="multi_image_picker_processing_images_message">Dit kan even duren</string>
-    <string name="discard" translatable="false">Annuleren</string>
-    <string name="done" translatable="false">Indienen</string>
+    <string name="discard">Annuleren</string>
+    <string name="done">Indienen</string>
 </resources>
