@@ -94,10 +94,7 @@ static NSString * const CollectionCellReuseIdentifier = @"CollectionCell";
     self.toolbarItems = self.picker.toolbarItems;
     
     //Title
-    if (!self.picker.title)
     self.title = NSLocalizedStringFromTable(@"picker.navigation.title", @"GMImagePicker",@"Navigation bar default title");
-    else
-    self.title = self.picker.title;
     
     
     // TO-DO Customizable predicates:

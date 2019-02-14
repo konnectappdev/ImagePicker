@@ -5,7 +5,7 @@
 "picker.navigation.done-button" = "Gotowe";
 
 /* Navigation bar default title */
-"picker.navigation.title" = "GMImagePicker";
+"picker.navigation.title" = "Zdjęć";
 
 /* %@ Items Selected */
 "picker.selection.multiple-items" = "%@ elementów wybranych";
