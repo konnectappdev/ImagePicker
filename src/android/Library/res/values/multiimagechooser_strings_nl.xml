@@ -7,5 +7,5 @@
     <string name="multi_image_picker_processing_images_title">Afbeeldingen verwerken</string>
     <string name="multi_image_picker_processing_images_message">Dit kan even duren</string>
     <string name="discard">Annuleren</string>
-    <string name="done">Indienen</string>
+    <string name="done">Kiezen</string>
 </resources>
