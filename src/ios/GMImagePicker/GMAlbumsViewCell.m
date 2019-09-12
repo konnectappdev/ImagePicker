@@ -29,6 +29,9 @@
         self.titleLabel.backgroundColor         = self.backgroundColor;
         self.infoLabel.backgroundColor          = self.backgroundColor;
         
+        self.titleLabel.backgroundColor         = self.backgroundColor;
+        self.infoLabel.backgroundColor          = self.backgroundColor;
+        
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         
         // Border width of 1 pixel:
