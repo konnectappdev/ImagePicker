@@ -196,6 +196,16 @@ public class MultiImageChooserActivity extends AppCompatActivity implements
 
         if (maxImages == 0 && isChecked) {
             isChecked = false;
+            new AlertDialog.Builder(this)
+                    .setTitle(String.format(getString(fakeR.getId("string", "max_count_photos_title")), maxImageCount))
+                    .setMessage(String.format(getString(fakeR.getId("string", "max_count_photos_message")), maxImageCount))
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .create()
+                    .show();
 
         } else if (isChecked) {
             fileNames.put(name, rotation);
